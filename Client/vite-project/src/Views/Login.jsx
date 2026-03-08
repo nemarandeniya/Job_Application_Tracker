@@ -1,22 +1,35 @@
+import axios from 'axios'
 import { useState } from 'react'
-import React from 'react'
+import { toast } from "react-toastify";
+import { Link, useNavigate } from 'react-router-dom'
 
 const Login = () => {
-    const [email, setEmail] = useState("")
-    const [password, setpassword] = useState("")
+    const [form, setForm] = useState({ email: '', password: '' })
     const [loading, setLoading] = useState(false)
     const [submitted, setSubmitted] = useState(false)
+    const navigate = useNavigate()
 
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value })
+    }
 
-    const handleLogin = () => {
+    const handleLogin = async (e) => {
+        e.preventDefault()
+
         try {
             setLoading(true);
-
+            const response = await axios.post("http://localhost:5000/auth/login", form)
+            if (response.data.success) {
+                toast.success("Successfully Registered!")
+                localStorage.setItem("token", response.data.token)
+                navigate('/dashboard')
+                console.log(response.data);
+            }
             setLoading(false)
             setSubmitted(true)
         } catch (error) {
             setLoading(false)
-            console.log(error);
+            toast.error(error.response?.data?.message || "Signin failed")
         }
     }
 
@@ -57,7 +70,7 @@ const Login = () => {
             </div>
 
             {/* Right side */}
-            <div className="w-5/12 flex flex-col justify-center px-16 py-20 relative justify-center bg-stone-100">
+            <div className="w-5/12 flex flex-col px-16 py-20 relative justify-center bg-stone-100">
                 <form className="w-80 space-y-4">
                     {/* top accent bar */}
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-600 to-yellow-800"></div>
@@ -76,6 +89,10 @@ const Login = () => {
                     </div>
                     <input
                         type="email"
+                        name='email'
+                        value={form.email}
+                        onChange={handleChange}
+                        required
                         placeholder="you@example.com"
                         className="w-full bg-transparent border-b border-stone-300 focus:border-yellow-600 py-2 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
                     />
@@ -88,7 +105,11 @@ const Login = () => {
                     </div>
                     <input
                         type="password"
+                        name='password'
+                        value={form.password}
+                        onChange={handleChange}
                         placeholder="*********"
+                        required
                         className="w-full bg-transparent border-b border-stone-300 focus:border-yellow-600 py-2 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
                     />
 
@@ -101,9 +122,9 @@ const Login = () => {
                     <div className="mt-8 flexitems center">
                         <span className='font-mono text-xs text-neutral-400'>
                             New here:{" "}
-                            <span className='text-yellow-700 border-b border-yellow-600 cursor-pointer hover:text-neutral-900 transition-colors'>
+                            <Link to={"/signup"} className='text-yellow-700 border-b border-yellow-600 cursor-pointer hover:text-neutral-900 transition-colors'>
                                 Apply for access
-                            </span>
+                            </Link>
                         </span>
                     </div>
 
@@ -133,35 +154,3 @@ export default Login
 
 
 
-
-// import React from 'react'
-
-// const Login = () => {
-//     return (
-//         <div className="flex h-screen">
-
-//             {/* Left side image */}
-//             <div className="flex w-1/2">
-//                 {/* <img
-//                     src="/3639384.jpg"
-//                     alt="login image"
-//                     className="w-full h-full object-cover"
-//                 /> */}
-//                 <h2>bkxkkd</h2>
-//             </div>
-
-//             {/* Right side form */}
-//             <div className="w-1/2 flex items-center justify-center bg-white">
-//                 <form className="w-80 space-y-4">
-//                     <h2 className="text-2xl font-bold">Login</h2>
-//                     <input type="email" placeholder="Email" className="w-full border p-2 rounded" />
-//                     <input type="password" placeholder="Password" className="w-full border p-2 rounded" />
-//                     <button className="w-full bg-blue-600 text-white p-2 rounded">Login</button>
-//                 </form>
-//             </div>
-
-//         </div>
-//     )
-// }
-
-// export default Login

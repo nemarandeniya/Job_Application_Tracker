@@ -50,8 +50,9 @@ const Signup = () => {
 
             const response = await axios.post("http://localhost:5000/auth/register", formData)
             if (response.data.success) {
-                toast.success("Successfully Registered!")
-                navigate('/login')
+                toast.success("Account Created Successfully! Welcome Job Application Tracker")
+                navigate('/dashboard')
+                console.log(response.data);
             }
             setLoading(false)
             setSubmitted(true)
@@ -98,10 +99,10 @@ const Signup = () => {
             </div>
 
             {/* Right side */}
-            <div className="w-5/12 flex flex-col justify-center px-16 py-20 relative justify-center bg-stone-100">
+            <div className="w-5/12 flex flex-col px-16 py-20 relative justify-center bg-stone-100">
                 <form className="w-full space-y-4" onSubmit={handleSignup}>
                     {/* top accent bar */}
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-600 to-yellow-800"></div>
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-yellow-600 to-yellow-800"></div>
 
                     <p className=' font-mono text-xs tracking-widest uppercase text-neutral-400 mb-3'>Member access</p>
                     <h2 className="text-4xl font-serif font-bold text-neutral-900 leading-tight mb-2">
@@ -212,9 +213,9 @@ const Signup = () => {
                     <div className="mt-4 flexitems center">
                         <span className='font-mono text-xs text-neutral-400'>
                             Have an account?:{" "}
-                            <span className='text-yellow-700 border-b border-yellow-600 cursor-pointer hover:text-neutral-900 transition-colors'>
+                            <Link to={'/'} className='text-yellow-700 border-b border-yellow-600 cursor-pointer hover:text-neutral-900 transition-colors'>
                                 Sign in
-                            </span>
+                            </Link>
                         </span>
                     </div>
 

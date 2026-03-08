@@ -48,4 +48,24 @@ const register = async (req, res) => {
     }
 }
 
-export { register, upload }
+const login = async (req, res) => {
+    try {
+        const { email, password } = req.body
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not exists!" })
+        }
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch) {
+            return res.status(404).json({ success: false, message: "Wrong Credentials!" })
+        }
+
+        //Genarate token
+        const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, { expiresIn: "1d" })
+        return res.status(200).json({ success: true, message: "Login successful", token, user: { _id: user._id, name: user.name, email: user.email } })
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message })
+    }
+}
+
+export { register, upload, login }

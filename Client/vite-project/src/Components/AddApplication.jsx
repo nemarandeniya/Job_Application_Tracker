@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { useGetUserId } from '../hooks/useGetUser.js'
+import { useGetUser } from '../hooks/useGetUser.js'
+
 
 const AddApplication = ({ isOpen, onClose }) => {
 
@@ -15,21 +18,43 @@ const AddApplication = ({ isOpen, onClose }) => {
     }
 
     const [application, setApplication] = useState(initialApplication)
+    const user = useGetUser()
 
     const handleChange = async (e) => {
-        const { name, value } = e.target;
-        setApplication({ ...application, [name]: value })
+        const { name, value, files } = e.target;
+
+        if (name === "usedResume") {
+            setApplication({ ...application, usedResume: files[0] })
+        } else {
+            setApplication({ ...application, [name]: value })
+        }
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            await axios.post("http://localhost:5000/application", application)
+            console.log("user:", user);
+
+            const formData = new FormData();
+
+            formData.append("userId", user.id)
+            formData.append("companyName", application.companyName)
+            formData.append("jobTitle", application.jobTitle)
+            formData.append("jobType", application.jobType)
+            formData.append("jobStatus", application.jobStatus)
+            formData.append("aplicationDate", application.aplicationDate)
+            formData.append("note", application.note)
+            formData.append("usedResume", application.usedResume)
+
+            await axios.post("http://localhost:5000/application", formData)
             setApplication(initialApplication)
             onClose(true)
             toast.success("Application Added Successfully")
         } catch (error) {
             toast.error(error.response?.data?.message || "Application Add failed")
+            console.log(error);
+            console.log("user:", user);
+
         }
     }
 
@@ -71,7 +96,6 @@ const AddApplication = ({ isOpen, onClose }) => {
                                         type="text"
                                         name='jobTitle'
                                         value={application.jobTitle}
-                                        // placeholder="George"
                                         onChange={handleChange}
                                         className="w-full  bg-white border-b border-stone-300 focus:border-yellow-600 py-2 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
                                     />
@@ -120,7 +144,6 @@ const AddApplication = ({ isOpen, onClose }) => {
                                         type="date"
                                         name='aplicationDate'
                                         value={application.aplicationDate}
-                                        // placeholder="Martin"
                                         onChange={handleChange}
                                         className="w-full  bg-white border-b border-stone-300 focus:border-yellow-600 py-2 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
                                     />
@@ -133,8 +156,6 @@ const AddApplication = ({ isOpen, onClose }) => {
                                         type="file"
                                         name='usedResume'
                                         accept=".pdf,.doc,.docx"
-                                        value={application.usedResume}
-                                        // placeholder="George"
                                         onChange={handleChange}
                                         className="w-full bg-white border-b border-stone-300 focus:border-yellow-600 py-2 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
                                     />
@@ -145,9 +166,7 @@ const AddApplication = ({ isOpen, onClose }) => {
                                     Notes
                                 </label>
                                 <textarea
-                                    type="file"
                                     name='note'
-                                    accept=".pdf,.doc,.docx"
                                     value={application.note}
                                     placeholder="Any additional note about this application...."
                                     onChange={handleChange}
@@ -163,8 +182,10 @@ const AddApplication = ({ isOpen, onClose }) => {
                                 </div>
                                 <div className="flex w-4/12 mb-4">
                                     <button
+                                        type='button'
+                                        onClick={() => { setApplication(initialApplication) }}
                                         className="w-full py-4 rounded-lg bg-gray-300 hover:bg-yellow-600 text-neutral-900 hover:text-neutral-900 font-mono text-xs tracking-widest uppercase transition-colors duration-300 disabled:opacity-60">
-                                        Cancel
+                                        Clear
                                     </button>
                                 </div>
                             </div>

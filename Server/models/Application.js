@@ -1,29 +1,34 @@
 import mongoose from "mongoose";
 
 const ApplicationSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true
+    },
     companyName: {
         type: String,
-        require: true,
+        required: true,
     },
     jobTitle: {
         type: String,
-        require: true,
+        required: true,
     },
     jobType: {
         type: String,
-        require: true,
+        required: true,
     },
     jobStatus: {
         type: String,
-        require: true,
+        required: true,
     },
     aplicationDate: {
         type: String,
-        require: true,
+        required: true,
     },
     usedResume: {
         type: String,
-        require: true,
+        required: true,
     },
     note: {
         type: String,

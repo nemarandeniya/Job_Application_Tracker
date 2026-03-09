@@ -3,10 +3,12 @@ import { motion } from 'framer-motion'
 import { HiOutlineLogout } from "react-icons/hi";
 import AddApplication from './AddApplication';
 import { useNavigate } from 'react-router-dom'
+import { useGetUser } from '../hooks/useGetUser.js'
 
 const Navbar = ({ openModal }) => {
 
     const navigate = useNavigate()
+    const user = useGetUser()
 
 
     const handleLogout = () => {
@@ -23,7 +25,7 @@ const Navbar = ({ openModal }) => {
                         <h2 className="text-2xl font-serif font-bold text-neutral-900 leading-tight mb-0.5">
                             Job Application Tracker
                         </h2>
-                        <p className='font-mono text-m text-neutral-400'>Welcome back.Nuwan!</p>
+                        <p className='font-mono text-m text-neutral-400'>Welcome back.{user.firstName}!</p>
                     </div>
                     <div className="flex flex-col">
                         <div className="flex gap-2">

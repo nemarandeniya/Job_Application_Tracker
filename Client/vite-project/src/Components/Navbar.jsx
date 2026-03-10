@@ -25,7 +25,7 @@ const Navbar = ({ openModal }) => {
                         <h2 className="text-2xl font-serif font-bold text-neutral-900 leading-tight mb-0.5">
                             Job Application Tracker
                         </h2>
-                        <p className='font-mono text-m text-neutral-400'>Welcome back.{user.firstName}!</p>
+                        <p className='font-mono text-m text-neutral-400'>Welcome back.!</p>
                     </div>
                     <div className="flex flex-col">
                         <div className="flex gap-2">

@@ -1,21 +1,21 @@
 import ApplicationModal from "../models/Application.js";
-import multer from "multer";
-import path from 'path'
+// import multer from "multer";
+// import path from 'path'
 
 
-const storage = multer.diskStorage({//diskStorage tells multer where and how to store uploaded files.
-    destination: (req, file, cb) => {
-        cb(null, "public/resumes")//this is where image stores
-    },
+// const storage = multer.diskStorage({//diskStorage tells multer where and how to store uploaded files.
+//     destination: (req, file, cb) => {
+//         cb(null, "public/resumes")//this is where image stores
+//     },
 
-    //rename resume file(timestamp + file extension)
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname))
-    }
-})
+//     //rename resume file(timestamp + file extension)
+//     filename: (req, file, cb) => {
+//         cb(null, Date.now() + path.extname(file.originalname))
+//     }
+// })
 
 //create upload middleware
-const upload = multer({ storage: storage })
+// const upload = multer({ storage: storage })
 
 const getApplication = async (req, res) => {
     const userID = req.params.userID
@@ -38,7 +38,7 @@ const addAplication = async (req, res) => {
             jobStatus: req.body.jobStatus,
             aplicationDate: req.body.aplicationDate,
             note: req.body.note,
-            usedResume: req.file.filename,
+            usedResume: req.body.usedResume,
         })
         const response = await application.save()
         return res.status(200).json({ success: true, message: "Application added successfully", response })
@@ -49,8 +49,10 @@ const addAplication = async (req, res) => {
 
 const updateApplication = async (req, res) => {
     try {
-        const { id } = req.params
-        const updateApplication = await ApplicationModal.findByIdAndUpdate(id, req.body)
+        const applicationId = req.params.id
+        const updateData = req.body
+        const updateApplication = await ApplicationModal.findByIdAndUpdate(applicationId, updateData,
+            { new: true })
         return res.status(200).json({ success: true, message: "Application Updated successfully", updateApplication })
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message })
@@ -96,4 +98,4 @@ const countApplicationBasedOnStatus = async (req, res) => {
     }
 }
 
-export { getApplication, addAplication, upload, countApplication, countApplicationBasedOnStatus, updateApplication, deleteApplication }
+export { getApplication, addAplication, countApplication, countApplicationBasedOnStatus, updateApplication, deleteApplication }

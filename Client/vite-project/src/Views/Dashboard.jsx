@@ -11,17 +11,20 @@ import { useGetUser } from '../hooks/useGetUser.js'
 import axios from 'axios'
 import { toast } from 'react-toastify';
 import ApplicationCard from '../Components/ApplicationCard.jsx'
+import UpdateApplication from '../Components/updateApplication.jsx'
 
-const Dashboard = ({ title, icon, value }) => {
+const Dashboard = () => {
 
     const navigate = useNavigate();
     const user = useGetUser()
     const [isOpen, setIsOpen] = useState(false)
+    const [isUpdateOpen, setIsUpdateOpen] = useState(false)
     const [count, setCount] = useState(0)
     const [pendingCount, setPendingCount] = useState(0)
     const [interviewCount, setInterviewCount] = useState(0)
     const [rejectCount, setRejectCount] = useState(0)
     const [applications, setApplications] = useState([])
+    const [selectedApplication, setSelectedApplication] = useState(null)
 
 
     const getAllApplications = async () => {
@@ -49,31 +52,33 @@ const Dashboard = ({ title, icon, value }) => {
         }
     }
 
-    useEffect(() => {
-        const getCount = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5000/application/count/${user.id}`)
-                if (response.data.success) {
-                    setCount(response.data.count)
-                }
-            } catch (error) {
-                console.log(error);
+    const getCount = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/application/count/${user.id}`)
+            if (response.data.success) {
+                setCount(response.data.count)
             }
+        } catch (error) {
+            console.log(error);
         }
+    }
+
+    const getStatusCount = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/application/statuscount/${user.id}`)
+            if (response.data.success) {
+                setPendingCount(response.data.pending)
+                setInterviewCount(response.data.interview)
+                setRejectCount(response.data.rejected)
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
         getCount()
 
-        const getStatusCount = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5000/application/statuscount/${user.id}`)
-                if (response.data.success) {
-                    setPendingCount(response.data.pending)
-                    setInterviewCount(response.data.interview)
-                    setRejectCount(response.data.rejected)
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
         getStatusCount()
 
         getAllApplications()
@@ -89,7 +94,17 @@ const Dashboard = ({ title, icon, value }) => {
     return (
         <div >
             <Navbar openModal={() => setIsOpen(true)} />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 ms-2 me-6">
+            <div className={'max-w-[340px] p-5 ms-q  mt-22 mb-8 rounded-xl overflow-hidden shadow-2xl transition-shadow duration-300 bg-gray-50/80 border border-gray-200 backdrop-blur-sm z-50'}>
+                <div className="flex items-center justify-center">
+                    <div className="me-5 w-16 h-16 rounded-full border-2  border-stone-300  flex items-center justify-center overflow-hidden transition-colors duration-300 flex-shrink-0">
+                        <img src={`http://localhost:5000${user.profilePhoto}`} alt='profilePhoto' className='w-full h-full object-cover' />
+                    </div>
+                    <div className="font-mono text-lg">
+                        {user.firstName}{" "}{user.lastName}
+                    </div>
+                </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  ms-2 me-6">
                 <DashboardCard title={'Total Applications'} icon={<HiOutlineDocumentText size={30} className='text-blue-400' />} value={count} />
                 <DashboardCard title={'Pending'} icon={<MdOutlineSchedule size={30} className='text-yellow-400' />} value={pendingCount} />
                 <DashboardCard title={'Interviews'} icon={<MdOutlinePendingActions size={30} className='text-green-400' />} value={interviewCount} />
@@ -106,11 +121,17 @@ const Dashboard = ({ title, icon, value }) => {
             ) : (
                 <div className="grid sm:grid-cols-1 lg:grid-cols-2 mb-0.5">
                     {applications.map((application) => (
-                        <ApplicationCard key={application._id} onDelete={deleteApplication} application={application} />
+                        <ApplicationCard key={application._id} onDelete={deleteApplication} application={application} onEdit={() => {
+                            console.log(application);
+                            setSelectedApplication(application)
+                            setIsUpdateOpen(true)
+                        }} />
                     ))}
+                    <UpdateApplication isOpen={isUpdateOpen} onClose={() => setIsUpdateOpen(false)} application={selectedApplication} refreshApplication={getAllApplications} getStatusCount={getStatusCount} />
                 </div>
             )}
-            <AddApplication isOpen={isOpen} onClose={() => setIsOpen(false)} />
+            <AddApplication isOpen={isOpen} onClose={() => setIsOpen(false)} application={selectedApplication} refreshApplication={getAllApplications} getCount={getCount} getStatusCount={getStatusCount} />
+
             {/* companyName={application.companyName} jobTitle={application.jobTitle} jobType={application.jobType} jobStatus={application.jobStatus} aplicationDate={application.aplicationDate} note={application.note} usedResume={application.usedResume} */}
         </div>
     )

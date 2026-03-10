@@ -8,7 +8,8 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
-
+// serve uploads folder
+app.use("/uploads", express.static("public/uploads"));
 app.use("/auth", authRoutes)
 app.use("/application", applicationRoutes)
 

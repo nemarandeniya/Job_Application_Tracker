@@ -5,7 +5,7 @@ import { useGetUserId } from '../hooks/useGetUser.js'
 import { useGetUser } from '../hooks/useGetUser.js'
 
 
-const AddApplication = ({ isOpen, onClose }) => {
+const AddApplication = ({ isOpen, onClose, refreshApplication, getStatusCount, getCount }) => {
 
     const initialApplication = {
         companyName: "",
@@ -21,13 +21,16 @@ const AddApplication = ({ isOpen, onClose }) => {
     const user = useGetUser()
 
     const handleChange = async (e) => {
-        const { name, value, files } = e.target;
+        const { name, value } = e.target
 
-        if (name === "usedResume") {
-            setApplication({ ...application, usedResume: files[0] })
-        } else {
-            setApplication({ ...application, [name]: value })
-        }
+        setApplication({ ...application, [name]: value })
+        // const { name, value, files } = e.target;
+
+        // if (name === "usedResume") {
+        //     setApplication({ ...application, usedResume: files[0] })
+        // } else {
+        //     setApplication({ ...application, [name]: value })
+        // }
     }
 
     const handleSubmit = async (e) => {
@@ -35,20 +38,23 @@ const AddApplication = ({ isOpen, onClose }) => {
         try {
             console.log("user:", user);
 
-            const formData = new FormData();
+            // const formData = new FormData();
 
-            formData.append("userId", user.id)
-            formData.append("companyName", application.companyName)
-            formData.append("jobTitle", application.jobTitle)
-            formData.append("jobType", application.jobType)
-            formData.append("jobStatus", application.jobStatus)
-            formData.append("aplicationDate", application.aplicationDate)
-            formData.append("note", application.note)
-            formData.append("usedResume", application.usedResume)
+            // formData.append("userId", user.id)
+            // formData.append("companyName", application.companyName)
+            // formData.append("jobTitle", application.jobTitle)
+            // formData.append("jobType", application.jobType)
+            // formData.append("jobStatus", application.jobStatus)
+            // formData.append("aplicationDate", application.aplicationDate)
+            // formData.append("note", application.note)
+            // formData.append("usedResume", application.usedResume)
 
-            await axios.post("http://localhost:5000/application", formData)
+            await axios.post("http://localhost:5000/application", { userId: user.id, ...application })//...application-->JavaScript spreads all properties of application into the new object
             setApplication(initialApplication)
             onClose(true)
+            refreshApplication()
+            getStatusCount()
+            getCount()
             toast.success("Application Added Successfully")
         } catch (error) {
             toast.error(error.response?.data?.message || "Application Add failed")
@@ -153,9 +159,10 @@ const AddApplication = ({ isOpen, onClose }) => {
                                         Resume used
                                     </label>
                                     <input
-                                        type="file"
+                                        type="text"
                                         name='usedResume'
-                                        accept=".pdf,.doc,.docx"
+                                        value={application.usedResume}
+                                        // accept=".pdf,.doc,.docx"
                                         onChange={handleChange}
                                         className="w-full bg-white border-b border-stone-300 focus:border-yellow-600 py-2 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
                                     />

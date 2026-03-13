@@ -25,12 +25,14 @@ const Dashboard = () => {
     const [rejectCount, setRejectCount] = useState(0)
     const [applications, setApplications] = useState([])
     const [selectedApplication, setSelectedApplication] = useState(null)
-
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
 
     const getAllApplications = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/application/${user.id}`)
+            const response = await axios.get(`http://localhost:5000/application/${user.id}?page=${page}&limit=6`)
             setApplications(response.data.response)
+            setTotalPages(response.data.totalPages)
         } catch (error) {
             console.error(error);
         }
@@ -87,7 +89,7 @@ const Dashboard = () => {
         if (!token) {
             navigate('/')
         }
-    }, [user?.id, navigate])
+    }, [user?.id, navigate, page])
 
 
 
@@ -133,6 +135,19 @@ const Dashboard = () => {
             <AddApplication isOpen={isOpen} onClose={() => setIsOpen(false)} application={selectedApplication} refreshApplication={getAllApplications} getCount={getCount} getStatusCount={getStatusCount} />
 
             {/* companyName={application.companyName} jobTitle={application.jobTitle} jobType={application.jobType} jobStatus={application.jobStatus} aplicationDate={application.aplicationDate} note={application.note} usedResume={application.usedResume} */}
+            {/* Pagination */}
+            <div className=' flex items-center justify-center mt-7'>
+                {[...Array(totalPages)].map((_, i) => (
+                    <button key={i} className='bg-gray-950 cursor-pointer p-1 me-1 border border-gray-200 backdrop-blur-sm text-white' onClick={() => setPage(i + 1)}>
+                        {i + 1}
+                    </button>
+                ))}
+
+                {/* Array(totalPages)-->Creates an empty array with totalPages length.
+                    _ → current value (we don't need it)
+                    i → index number (0,1,2,3...)
+                    */}
+            </div>
         </div>
     )
 }

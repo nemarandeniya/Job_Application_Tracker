@@ -20,9 +20,14 @@ import ApplicationModal from "../models/Application.js";
 const getApplication = async (req, res) => {
     const userID = req.params.userID
     try {
-        const response = await ApplicationModal.find({ userId: userID })
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 6
 
-        return res.status(200).json({ success: true, message: "Application added successfully", response })
+        const skip = (page - 1) * limit
+        const response = await ApplicationModal.find({ userId: userID }).skip(skip).limit(limit)
+        const total = await ApplicationModal.countDocuments({ userId: userID })
+
+        return res.status(200).json({ success: true, message: "Application get successfully", response, totalPages: Math.ceil(total / limit), currentPage: page })
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message })
     }

@@ -94,7 +94,7 @@ const Login = () => {
                         onChange={handleChange}
                         required
                         placeholder="you@example.com"
-                        className="w-full bg-transparent border-b border-stone-300 focus:border-yellow-600 py-2 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
+                        className="w-full bg-transparent border-b border-stone-300 focus:border-yellow-600 valid:border-green-500 invalid:border-red-500 py-2 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
                     />
 
                     {/* password */}
@@ -110,7 +110,7 @@ const Login = () => {
                         onChange={handleChange}
                         placeholder="*********"
                         required
-                        className="w-full bg-transparent border-b border-stone-300 focus:border-yellow-600 py-2 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
+                        className="w-full bg-transparent border-b border-stone-300 focus:border-yellow-600 valid:border-green-500 invalid:border-red-500 py-3 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
                     />
 
                     <button

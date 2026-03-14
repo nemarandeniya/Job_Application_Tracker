@@ -13,6 +13,8 @@ const AddApplication = ({ isOpen, onClose, refreshApplication, getStatusCount, g
         jobType: "",
         jobStatus: "",
         aplicationDate: "",
+        interviewDate: "",
+        interviewTime: "",
         usedResume: "",
         note: "",
     }
@@ -168,6 +170,34 @@ const AddApplication = ({ isOpen, onClose, refreshApplication, getStatusCount, g
                                     />
                                 </div>
                             </div>
+                            {application.jobStatus === "interview" && (
+                                <div className="flex gap-6 mb-8">
+                                    <div className="flex-1">
+                                        <label className='block font-mono text-xs tracking-widest uppercase text-neutral-400 mb-2'>
+                                            Interview Date
+                                        </label>
+                                        <input
+                                            type="date"
+                                            name='interviewDate'
+                                            value={application.interviewDate}
+                                            onChange={handleChange}
+                                            className="w-full  bg-white border-b border-stone-300 focus:border-yellow-600 py-2 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
+                                        />
+                                    </div>
+                                    <div className="flex-1">
+                                        <label className='block font-mono text-xs tracking-widest uppercase text-neutral-400 mb-2'>
+                                            Interview Time
+                                        </label>
+                                        <input
+                                            type="time"
+                                            name='interviewTime'
+                                            value={application.interviewTime}
+                                            onChange={handleChange}
+                                            className="w-full  bg-white border-b border-stone-300 focus:border-yellow-600 py-2 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
+                                        />
+                                    </div>
+                                </div>
+                            )}
                             <div className="flex-1 mb-4">
                                 <label className='block font-mono text-xs tracking-widest uppercase text-neutral-400 mb-2'>
                                     Notes

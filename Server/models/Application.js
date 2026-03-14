@@ -26,6 +26,12 @@ const ApplicationSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    interviewDate: {
+        type: String,
+    },
+    interviewTime: {
+        type: String,
+    },
     usedResume: {
         type: String,
         required: true,

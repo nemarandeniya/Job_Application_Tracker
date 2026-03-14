@@ -42,6 +42,8 @@ const addAplication = async (req, res) => {
             jobType: req.body.jobType,
             jobStatus: req.body.jobStatus,
             aplicationDate: req.body.aplicationDate,
+            interviewDate: req.body.interviewDate,
+            interviewTime: req.body.interviewTime,
             note: req.body.note,
             usedResume: req.body.usedResume,
         })
@@ -103,4 +105,34 @@ const countApplicationBasedOnStatus = async (req, res) => {
     }
 }
 
-export { getApplication, addAplication, countApplication, countApplicationBasedOnStatus, updateApplication, deleteApplication }
+const interviewNotification = async (req, res) => {
+    try {
+        const today = new Date();
+        const tommorow = new Date()
+
+        tommorow.setDate(today.getDate() + 1)
+
+        const interviews = await ApplicationModal.find({ jobStatus: "interview" })
+
+        const notifications = interviews.filter((application) => {
+            if (!application.interviewDate) return false // skip missing dates
+            const interviewDate = new Date(application.interviewDate)
+            return (
+                interviewDate.getFullYear() === tommorow.getFullYear() &&
+                interviewDate.getMonth() === tommorow.getMonth() &&
+                interviewDate.getDate() === tommorow.getDate()
+            )
+        })
+        console.log(interviews);
+        console.log(notifications);
+
+        // res.json(interviews)
+        res.json(notifications)
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message })
+
+    }
+}
+
+export { getApplication, addAplication, countApplication, countApplicationBasedOnStatus, updateApplication, deleteApplication, interviewNotification }

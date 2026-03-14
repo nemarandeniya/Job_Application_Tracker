@@ -13,6 +13,7 @@ const UpdateApplication = ({ isOpen, onClose, application: selectedApplication, 
         jobType: "",
         jobStatus: "",
         aplicationDate: "",
+        interviewDate: "",
         usedResume: "",
         note: "",
     }
@@ -151,6 +152,23 @@ const UpdateApplication = ({ isOpen, onClose, application: selectedApplication, 
                                     />
                                 </div>
                             </div>
+                            {application.jobStatus === "interview" && (
+                                <div className="flex gap-6 mb-8">
+                                    <div className="flex-1">
+                                        <label className='block font-mono text-xs tracking-widest uppercase text-neutral-400 mb-2'>
+                                            Interview Date
+                                        </label>
+                                        <input
+                                            type="date"
+                                            name='interviewDate'
+                                            value={application.interviewDate}
+                                            onChange={handleChange}
+                                            className="w-full  bg-white border-b border-stone-300 focus:border-yellow-600 py-2 font-serif text-base text-neutral-900 placeholder-stone-300 outline-none transition-colors duration-300"
+                                        />
+                                    </div>
+                                    <div className="flex-1"></div>
+                                </div>
+                            )}
                             <div className="flex-1 mb-4">
                                 <label className='block font-mono text-xs tracking-widest uppercase text-neutral-400 mb-2'>
                                     Notes

@@ -61,11 +61,31 @@ const login = async (req, res) => {
         }
 
         //Genarate token
-        const token = jwt.sign({ id: user._id, firstName: user.firstName, lastName: user.lastName, profilePhoto: user.profilePhoto }, process.env.JWT_KEY, { expiresIn: "1d" })
+        const token = jwt.sign({ id: user._id, firstName: user.firstName, lastName: user.lastName, email: user.email, profilePhoto: user.profilePhoto }, process.env.JWT_KEY, { expiresIn: "1d" })
         return res.status(200).json({ success: true, message: "Login successful", token, user: { _id: user._id, name: user.name, email: user.email } })
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message })
     }
 }
 
-export { register, upload, login }
+const updateUser = async (req, res) => {
+    try {
+        const userId = req.params.id
+        const updateData = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+        }
+        if (req.file) {
+            updateData.profilePhoto = `/uploads/${req.file.filename}`
+        }
+        const updatedUser = await User.findByIdAndUpdate(userId, updateData,
+            { new: true }
+        )
+        return res.status(200).json({ success: true, message: "User Updated successfully", updatedUser })
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message })
+    }
+}
+
+export { register, upload, login, updateUser }

@@ -12,6 +12,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify';
 import ApplicationCard from '../Components/ApplicationCard.jsx'
 import UpdateApplication from '../Components/updateApplication.jsx'
+import UpdateUser from '../Components/UpdateUser.jsx'
 
 const Dashboard = () => {
 
@@ -19,6 +20,7 @@ const Dashboard = () => {
     const user = useGetUser()
     const [isOpen, setIsOpen] = useState(false)
     const [isUpdateOpen, setIsUpdateOpen] = useState(false)
+    const [isUpdateUserOpen, setIsUpdateUserOpen] = useState(false)
     const [count, setCount] = useState(0)
     const [pendingCount, setPendingCount] = useState(0)
     const [interviewCount, setInterviewCount] = useState(0)
@@ -33,6 +35,8 @@ const Dashboard = () => {
             const response = await axios.get(`http://localhost:5000/application/${user.id}?page=${page}&limit=6`)
             setApplications(response.data.response)
             setTotalPages(response.data.totalPages)
+            console.log(user);
+
         } catch (error) {
             console.error(error);
         }
@@ -95,18 +99,9 @@ const Dashboard = () => {
 
     return (
         <div >
-            <Navbar openModal={() => setIsOpen(true)} />
-            <div className={'max-w-[340px] p-5 ms-q  mt-22 mb-8 rounded-xl overflow-hidden shadow-2xl transition-shadow duration-300 bg-gray-50/80 border border-gray-200 backdrop-blur-sm z-50'}>
-                <div className="flex items-center justify-center">
-                    <div className="me-5 w-16 h-16 rounded-full border-2  border-stone-300  flex items-center justify-center overflow-hidden transition-colors duration-300 flex-shrink-0">
-                        <img src={`http://localhost:5000${user.profilePhoto}`} alt='profilePhoto' className='w-full h-full object-cover' />
-                    </div>
-                    <div className="font-mono text-lg">
-                        {user.firstName}{" "}{user.lastName}
-                    </div>
-                </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  ms-2 me-6">
+            <Navbar openModal={() => setIsOpen(true)} onUserEdit={() => setIsUpdateUserOpen(true)} />
+
+            <div className="grid grid-cols-1 mt-36 sm:grid-cols-2 lg:grid-cols-4  ms-2 me-6">
                 <DashboardCard title={'Total Applications'} icon={<HiOutlineDocumentText size={30} className='text-blue-400' />} value={count} />
                 <DashboardCard title={'Pending'} icon={<MdOutlineSchedule size={30} className='text-yellow-400' />} value={pendingCount} />
                 <DashboardCard title={'Interviews'} icon={<MdOutlinePendingActions size={30} className='text-green-400' />} value={interviewCount} />
@@ -130,6 +125,7 @@ const Dashboard = () => {
                         }} />
                     ))}
                     <UpdateApplication isOpen={isUpdateOpen} onClose={() => setIsUpdateOpen(false)} application={selectedApplication} refreshApplication={getAllApplications} getStatusCount={getStatusCount} />
+                    <UpdateUser isOpen={isUpdateUserOpen} onClose={() => setIsUpdateUserOpen(false)} user={user} />
                 </div>
             )}
             <AddApplication isOpen={isOpen} onClose={() => setIsOpen(false)} application={selectedApplication} refreshApplication={getAllApplications} getCount={getCount} getStatusCount={getStatusCount} />
